@@ -1,7 +1,7 @@
 /**
  * Build styles
  */
-require('./index.css').toString();
+require("./index.css").toString();
 
 /**
  * Base Paragraph Block for the Editor.js.
@@ -31,7 +31,7 @@ class Paragraph {
    * @constructor
    */
   static get DEFAULT_PLACEHOLDER() {
-    return '';
+    return "";
   }
 
   /**
@@ -43,13 +43,13 @@ class Paragraph {
    * @param {object} params.api - editor.js api
    * @param {boolean} readOnly - read only mode flag
    */
-  constructor({data, config, api, readOnly}) {
+  constructor({ data, config, api, readOnly }) {
     this.api = api;
     this.readOnly = readOnly;
 
     this._CSS = {
       block: this.api.styles.block,
-      wrapper: 'ce-paragraph'
+      wrapper: "ce-paragraph",
     };
 
     if (!this.readOnly) {
@@ -60,10 +60,13 @@ class Paragraph {
      * Placeholder for paragraph if it is first Block
      * @type {string}
      */
-    this._placeholder = config.placeholder ? config.placeholder : Paragraph.DEFAULT_PLACEHOLDER;
+    this._placeholder = config.placeholder
+      ? config.placeholder
+      : Paragraph.DEFAULT_PLACEHOLDER;
     this._data = {};
     this._element = this.drawView();
-    this._preserveBlank = config.preserveBlank !== undefined ? config.preserveBlank : false;
+    this._preserveBlank =
+      config.preserveBlank !== undefined ? config.preserveBlank : false;
 
     this.data = data;
   }
@@ -75,14 +78,14 @@ class Paragraph {
    * @param {KeyboardEvent} e - key up event
    */
   onKeyUp(e) {
-    if (e.code !== 'Backspace' && e.code !== 'Delete') {
+    if (e.code !== "Backspace" && e.code !== "Delete") {
       return;
     }
 
-    const {textContent} = this._element;
+    const { textContent } = this._element;
 
-    if (textContent === '') {
-      this._element.innerHTML = '';
+    if (textContent === "") {
+      this._element.innerHTML = "";
     }
   }
 
@@ -92,7 +95,7 @@ class Paragraph {
    * @private
    */
   drawView() {
-    let div = document.createElement('DIV');
+    let div = document.createElement("DIV");
 
     div.classList.add(this._CSS.wrapper, this._CSS.block);
     div.contentEditable = false;
@@ -100,7 +103,7 @@ class Paragraph {
 
     if (!this.readOnly) {
       div.contentEditable = true;
-      div.addEventListener('keyup', this.onKeyUp);
+      div.addEventListener("keyup", this.onKeyUp);
     }
 
     return div;
@@ -123,7 +126,8 @@ class Paragraph {
    */
   merge(data) {
     let newData = {
-      text : this.data.text + data.text
+      text: this.data.text + data.text,
+      id: this.data.id,
     };
 
     this.data = newData;
@@ -138,7 +142,7 @@ class Paragraph {
    * @public
    */
   validate(savedData) {
-    if (savedData.text.trim() === '' && !this._preserveBlank) {
+    if (savedData.text.trim() === "" && !this._preserveBlank) {
       return false;
     }
 
@@ -153,7 +157,8 @@ class Paragraph {
    */
   save(toolsContent) {
     return {
-      text: toolsContent.innerHTML
+      text: toolsContent.innerHTML,
+      id: this.data.id,
     };
   }
 
@@ -164,7 +169,8 @@ class Paragraph {
    */
   onPaste(event) {
     const data = {
-      text: event.detail.data.innerHTML
+      text: event.detail.data.innerHTML,
+      id: this.data.id,
     };
 
     this.data = data;
@@ -175,19 +181,23 @@ class Paragraph {
    */
   static get conversionConfig() {
     return {
-      export: 'text', // to convert Paragraph to other block, use 'text' property of saved data
-      import: 'text' // to covert other block's exported string to Paragraph, fill 'text' property of tool data
+      export: "text", // to convert Paragraph to other block, use 'text' property of saved data
+      import: "text", // to covert other block's exported string to Paragraph, fill 'text' property of tool data
     };
   }
 
   /**
    * Sanitizer rules
+   *
+   * @returns {object}
    */
   static get sanitize() {
     return {
       text: {
         br: true,
-      }
+        span: true,
+        "obx-entity": true,
+      },
     };
   }
 
@@ -209,6 +219,7 @@ class Paragraph {
     let text = this._element.innerHTML;
 
     this._data.text = text;
+    this._data.id = this._data.id;
 
     return this._data;
   }
@@ -224,7 +235,7 @@ class Paragraph {
   set data(data) {
     this._data = data || {};
 
-    this._element.innerHTML = this._data.text || '';
+    this._element.innerHTML = this._data.text || "";
   }
 
   /**
@@ -235,7 +246,7 @@ class Paragraph {
    */
   static get pasteConfig() {
     return {
-      tags: [ 'P' ]
+      tags: ["P"],
     };
   }
 
@@ -246,8 +257,8 @@ class Paragraph {
    */
   static get toolbox() {
     return {
-      icon: require('./toolbox-icon.svg').default,
-      title: 'Text'
+      icon: require("./toolbox-icon.svg").default,
+      title: "Text",
     };
   }
 }
