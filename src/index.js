@@ -52,6 +52,8 @@ class Paragraph {
       wrapper: "ce-paragraph",
     };
 
+    this._id = data.id || "";
+
     if (!this.readOnly) {
       this.onKeyUp = this.onKeyUp.bind(this);
     }
@@ -73,7 +75,7 @@ class Paragraph {
 
   /**
    * Check if text content is empty and set empty string to inner html.
-   * We need this because some browsers (e.g. Safari) insert <br> into empty contenteditanle elements
+   * We need this because some browsers (e.g. Safari) insert <br> into empty contenteditable elements
    *
    * @param {KeyboardEvent} e - key up event
    */
@@ -96,6 +98,8 @@ class Paragraph {
    */
   drawView() {
     let div = document.createElement("DIV");
+
+    div.id = this._id;
 
     div.classList.add(this._CSS.wrapper, this._CSS.block);
     div.contentEditable = false;
